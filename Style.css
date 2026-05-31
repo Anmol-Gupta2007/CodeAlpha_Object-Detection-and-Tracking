@@ -1,0 +1,60 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:#111;
+    color:white;
+    padding:30px;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.card{
+    background:#1e1e1e;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:10px;
+}
+
+h2{
+    color:#4CAF50;
+    margin-bottom:15px;
+}
+
+button{
+    padding:10px 20px;
+    margin-right:10px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    background:#4CAF50;
+    color:white;
+}
+
+button:hover{
+    opacity:0.9;
+}
+
+video{
+    width:100%;
+    margin-top:15px;
+    border-radius:10px;
+}
+
+canvas{
+    width:100%;
+    border:2px solid #444;
+    border-radius:10px;
+}
