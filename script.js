@@ -3,27 +3,59 @@ const videoPlayer = document.getElementById("videoPlayer");
 const canvas = document.getElementById("outputCanvas");
 const ctx = canvas.getContext("2d");
 
-const startBtn = document.getElementById("startBtn");
-const stopBtn = document.getElementById("stopBtn");
-const statusText = document.getElementById("status");
+const objectCount = document.getElementById("objectCount");
+const trackCount = document.getElementById("trackCount");
+const fpsDisplay = document.getElementById("fps");
 
-let animationId;
+const trackingList =
+document.getElementById("trackingList");
 
-// Upload Video
-videoInput.addEventListener("change", function () {
-    const file = this.files[0];
+let running = false;
+let frameCounter = 0;
+let lastTime = performance.now();
 
-    if (file) {
-        const url = URL.createObjectURL(file);
-        videoPlayer.src = url;
+videoInput.addEventListener("change", e => {
+
+    const file = e.target.files[0];
+
+    if(file){
+        videoPlayer.src =
+        URL.createObjectURL(file);
     }
 });
 
-// Simulated Detection Visualization
-function detectObjects() {
+function addTrackingEvent(id,label){
 
-    canvas.width = videoPlayer.videoWidth;
-    canvas.height = videoPlayer.videoHeight;
+    const div =
+    document.createElement("div");
+
+    div.className="track-item";
+
+    div.innerHTML=`
+        <div class="track-id">
+            Track ID: ${id}
+        </div>
+        <div>${label}</div>
+    `;
+
+    trackingList.prepend(div);
+
+    if(trackingList.children.length>15){
+        trackingList.removeChild(
+            trackingList.lastChild
+        );
+    }
+}
+
+function renderFrame(){
+
+    if(!running) return;
+
+    canvas.width =
+    videoPlayer.videoWidth;
+
+    canvas.height =
+    videoPlayer.videoHeight;
 
     ctx.drawImage(
         videoPlayer,
@@ -33,33 +65,75 @@ function detectObjects() {
         canvas.height
     );
 
-    // Dummy Bounding Box
-    ctx.strokeStyle = "lime";
-    ctx.lineWidth = 3;
+    const detections =
+    Math.floor(Math.random()*8)+1;
 
-    ctx.strokeRect(100, 80, 150, 120);
+    objectCount.textContent =
+    detections;
 
-    ctx.fillStyle = "lime";
-    ctx.font = "18px Arial";
-    ctx.fillText("Person ID: 1", 100, 70);
+    trackCount.textContent =
+    detections;
 
-    animationId = requestAnimationFrame(detectObjects);
+    for(let i=0;i<detections;i++){
+
+        let x=Math.random()*600;
+        let y=Math.random()*300;
+
+        let w=80+Math.random()*80;
+        let h=80+Math.random()*60;
+
+        ctx.strokeStyle="#00ff88";
+        ctx.lineWidth=3;
+
+        ctx.strokeRect(x,y,w,h);
+
+        ctx.fillStyle="#00ff88";
+
+        ctx.font="16px Poppins";
+
+        ctx.fillText(
+        `Person #${i+1}`,
+        x,
+        y-10
+        );
+
+        if(Math.random()>.97){
+            addTrackingEvent(
+                i+1,
+                "Object Updated"
+            );
+        }
+    }
+
+    frameCounter++;
+
+    const now=performance.now();
+
+    if(now-lastTime>=1000){
+
+        fpsDisplay.textContent=
+        frameCounter;
+
+        frameCounter=0;
+        lastTime=now;
+    }
+
+    requestAnimationFrame(renderFrame);
 }
 
-startBtn.addEventListener("click", () => {
+document
+.getElementById("startBtn")
+.addEventListener("click",()=>{
 
-    statusText.textContent =
-        "Detection Running...";
-
+    running=true;
     videoPlayer.play();
 
-    detectObjects();
+    renderFrame();
 });
 
-stopBtn.addEventListener("click", () => {
+document
+.getElementById("stopBtn")
+.addEventListener("click",()=>{
 
-    statusText.textContent =
-        "Stopped";
-
-    cancelAnimationFrame(animationId);
+    running=false;
 });
