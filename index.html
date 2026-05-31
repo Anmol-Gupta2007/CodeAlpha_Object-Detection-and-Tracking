@@ -1,35 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Object Detection & Tracking</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Vision Tracker</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div class="container">
-    <h1>🎯 Real-Time Object Detection & Tracking</h1>
+<div class="background"></div>
 
-    <div class="card">
-        <h2>Video Input</h2>
+<header>
+    <h1>AI Vision Tracker</h1>
+    <p>Real-Time Object Detection & Tracking using YOLO + DeepSORT</p>
+</header>
+
+<section class="stats">
+
+    <div class="stat-card">
+        <h2 id="objectCount">0</h2>
+        <span>Objects Detected</span>
+    </div>
+
+    <div class="stat-card">
+        <h2 id="trackCount">0</h2>
+        <span>Active Tracks</span>
+    </div>
+
+    <div class="stat-card">
+        <h2 id="fps">0</h2>
+        <span>FPS</span>
+    </div>
+
+</section>
+
+<section class="main-grid">
+
+    <div class="glass video-card">
+
+        <div class="card-header">
+            <h2>Video Source</h2>
+        </div>
+
         <input type="file" id="videoInput" accept="video/*">
+
         <video id="videoPlayer" controls></video>
+
+        <div class="buttons">
+            <button id="startBtn">▶ Start Detection</button>
+            <button id="stopBtn">■ Stop</button>
+        </div>
+
     </div>
 
-    <div class="card">
-        <h2>Detection Controls</h2>
-        <button id="startBtn">Start Detection</button>
-        <button id="stopBtn">Stop</button>
-        <p id="status">Idle</p>
+    <div class="glass side-panel">
+
+        <h2>Tracking Activity</h2>
+
+        <div id="trackingList"></div>
+
     </div>
 
-    <div class="card">
-        <h2>Detection Output</h2>
-        <canvas id="outputCanvas"></canvas>
-    </div>
-</div>
+</section>
+
+<section class="glass output-section">
+
+    <h2>Detection Output</h2>
+
+    <canvas id="outputCanvas"></canvas>
+
+</section>
 
 <script src="script.js"></script>
+
 </body>
 </html>
