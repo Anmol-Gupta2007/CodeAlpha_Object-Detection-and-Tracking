@@ -1,86 +1,110 @@
-const videoInput = document.getElementById("videoInput");
-const videoPlayer = document.getElementById("videoPlayer");
-const canvas = document.getElementById("outputCanvas");
+const video = document.getElementById("video");
+const canvas = document.getElementById("overlay");
 const ctx = canvas.getContext("2d");
 
-const objectCount = document.getElementById("objectCount");
-const trackCount = document.getElementById("trackCount");
-const fpsDisplay = document.getElementById("fps");
+const startBtn = document.getElementById("startBtn");
+const stopBtn = document.getElementById("stopBtn");
+const webcamBtn = document.getElementById("webcamBtn");
 
-const trackingList =
-document.getElementById("trackingList");
+const videoInput = document.getElementById("videoInput");
 
+const fpsEl = document.getElementById("fps");
+const objectEl = document.getElementById("objects");
+const trackEl = document.getElementById("tracks");
+
+const activity = document.getElementById("activity");
+
+let stream = null;
 let running = false;
-let frameCounter = 0;
+let animationId = null;
+
+let frameCount = 0;
 let lastTime = performance.now();
 
-videoInput.addEventListener("change", e => {
-
-    const file = e.target.files[0];
-
-    if(file){
-        videoPlayer.src =
-        URL.createObjectURL(file);
-    }
-});
-
-function addTrackingEvent(id,label){
+function addLog(message){
 
     const div =
     document.createElement("div");
 
-    div.className="track-item";
+    div.className = "log";
+    div.textContent = message;
 
-    div.innerHTML=`
-        <div class="track-id">
-            Track ID: ${id}
-        </div>
-        <div>${label}</div>
-    `;
+    activity.prepend(div);
 
-    trackingList.prepend(div);
-
-    if(trackingList.children.length>15){
-        trackingList.removeChild(
-            trackingList.lastChild
+    while(activity.children.length > 20){
+        activity.removeChild(
+            activity.lastChild
         );
     }
 }
 
-function renderFrame(){
+videoInput.addEventListener("change", e=>{
+
+    const file = e.target.files[0];
+
+    if(!file) return;
+
+    video.src =
+    URL.createObjectURL(file);
+
+    addLog("Video loaded");
+});
+
+webcamBtn.addEventListener("click", async ()=>{
+
+    try{
+
+        stream =
+        await navigator.mediaDevices.getUserMedia({
+            video:true
+        });
+
+        video.srcObject = stream;
+
+        addLog("Webcam connected");
+
+    }catch(err){
+
+        addLog("Webcam access denied");
+    }
+});
+
+function resizeCanvas(){
+
+    canvas.width =
+    video.videoWidth;
+
+    canvas.height =
+    video.videoHeight;
+}
+
+function drawOverlay(){
 
     if(!running) return;
 
-    canvas.width =
-    videoPlayer.videoWidth;
-
-    canvas.height =
-    videoPlayer.videoHeight;
-
-    ctx.drawImage(
-        videoPlayer,
+    ctx.clearRect(
         0,
         0,
         canvas.width,
         canvas.height
     );
 
-    const detections =
-    Math.floor(Math.random()*8)+1;
+    const objects =
+    Math.floor(Math.random()*5)+1;
 
-    objectCount.textContent =
-    detections;
+    objectEl.textContent = objects;
+    trackEl.textContent = objects;
 
-    trackCount.textContent =
-    detections;
+    for(let i=0;i<objects;i++){
 
-    for(let i=0;i<detections;i++){
+        const x =
+        50 + i*120;
 
-        let x=Math.random()*600;
-        let y=Math.random()*300;
+        const y =
+        100 + i*25;
 
-        let w=80+Math.random()*80;
-        let h=80+Math.random()*60;
+        const w = 100;
+        const h = 80;
 
         ctx.strokeStyle="#00ff88";
         ctx.lineWidth=3;
@@ -89,51 +113,67 @@ function renderFrame(){
 
         ctx.fillStyle="#00ff88";
 
-        ctx.font="16px Poppins";
+        ctx.font="16px Arial";
 
         ctx.fillText(
-        `Person #${i+1}`,
-        x,
-        y-10
+            `ID ${i+1}`,
+            x,
+            y-8
         );
-
-        if(Math.random()>.97){
-            addTrackingEvent(
-                i+1,
-                "Object Updated"
-            );
-        }
     }
 
-    frameCounter++;
+    frameCount++;
 
-    const now=performance.now();
+    const now =
+    performance.now();
 
-    if(now-lastTime>=1000){
+    if(now-lastTime >= 1000){
 
-        fpsDisplay.textContent=
-        frameCounter;
+        fpsEl.textContent =
+        frameCount;
 
-        frameCounter=0;
-        lastTime=now;
+        frameCount = 0;
+        lastTime = now;
     }
 
-    requestAnimationFrame(renderFrame);
+    animationId =
+    requestAnimationFrame(
+        drawOverlay
+    );
 }
 
-document
-.getElementById("startBtn")
-.addEventListener("click",()=>{
+startBtn.addEventListener("click", ()=>{
 
-    running=true;
-    videoPlayer.play();
+    if(running) return;
 
-    renderFrame();
+    running = true;
+
+    video.play();
+
+    resizeCanvas();
+
+    drawOverlay();
+
+    addLog("Tracking started");
 });
 
-document
-.getElementById("stopBtn")
-.addEventListener("click",()=>{
+stopBtn.addEventListener("click", ()=>{
 
-    running=false;
+    running = false;
+
+    cancelAnimationFrame(
+        animationId
+    );
+
+    addLog("Tracking stopped");
 });
+
+video.addEventListener(
+    "loadedmetadata",
+    resizeCanvas
+);
+
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
