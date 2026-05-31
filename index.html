@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object Detection & Tracking</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>🎯 Real-Time Object Detection & Tracking</h1>
+
+    <div class="card">
+        <h2>Video Input</h2>
+        <input type="file" id="videoInput" accept="video/*">
+        <video id="videoPlayer" controls></video>
+    </div>
+
+    <div class="card">
+        <h2>Detection Controls</h2>
+        <button id="startBtn">Start Detection</button>
+        <button id="stopBtn">Stop</button>
+        <p id="status">Idle</p>
+    </div>
+
+    <div class="card">
+        <h2>Detection Output</h2>
+        <canvas id="outputCanvas"></canvas>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
