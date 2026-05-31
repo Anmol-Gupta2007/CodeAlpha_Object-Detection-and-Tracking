@@ -2,77 +2,88 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>AI Vision Tracker</title>
 
 <link rel="stylesheet" href="style.css">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
 <div class="background"></div>
 
 <header>
     <h1>AI Vision Tracker</h1>
-    <p>Real-Time Object Detection & Tracking using YOLO + DeepSORT</p>
+    <p>Real-Time Object Detection & Tracking Dashboard</p>
 </header>
 
-<section class="stats">
+<div class="dashboard">
 
-    <div class="stat-card">
-        <h2 id="objectCount">0</h2>
-        <span>Objects Detected</span>
-    </div>
+    <section class="video-section glass">
 
-    <div class="stat-card">
-        <h2 id="trackCount">0</h2>
-        <span>Active Tracks</span>
-    </div>
+        <div class="toolbar">
 
-    <div class="stat-card">
-        <h2 id="fps">0</h2>
-        <span>FPS</span>
-    </div>
+            <input
+                type="file"
+                id="videoInput"
+                accept="video/*">
 
-</section>
+            <button id="startBtn">
+                Start
+            </button>
 
-<section class="main-grid">
+            <button id="stopBtn">
+                Stop
+            </button>
 
-    <div class="glass video-card">
+            <button id="webcamBtn">
+                Webcam
+            </button>
 
-        <div class="card-header">
-            <h2>Video Source</h2>
         </div>
 
-        <input type="file" id="videoInput" accept="video/*">
+        <div class="video-wrapper">
 
-        <video id="videoPlayer" controls></video>
+            <video
+                id="video"
+                playsinline
+                muted>
+            </video>
 
-        <div class="buttons">
-            <button id="startBtn">▶ Start Detection</button>
-            <button id="stopBtn">■ Stop</button>
+            <canvas id="overlay"></canvas>
+
         </div>
 
-    </div>
+    </section>
 
-    <div class="glass side-panel">
+    <aside class="glass side-panel">
 
-        <h2>Tracking Activity</h2>
+        <h2>Statistics</h2>
 
-        <div id="trackingList"></div>
+        <div class="stat">
+            <span>Objects</span>
+            <strong id="objects">0</strong>
+        </div>
 
-    </div>
+        <div class="stat">
+            <span>Tracks</span>
+            <strong id="tracks">0</strong>
+        </div>
 
-</section>
+        <div class="stat">
+            <span>FPS</span>
+            <strong id="fps">0</strong>
+        </div>
 
-<section class="glass output-section">
+        <h2>Activity</h2>
 
-    <h2>Detection Output</h2>
+        <div id="activity"></div>
 
-    <canvas id="outputCanvas"></canvas>
+    </aside>
 
-</section>
+</div>
 
 <script src="script.js"></script>
 
